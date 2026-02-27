@@ -1,0 +1,14 @@
+fastapi==0.116.1
+uvicorn[standard]==0.35.0
+sqlalchemy==2.0.43
+alembic==1.16.5
+psycopg[binary]==3.2.9
+pydantic-settings==2.10.1
+python-dotenv==1.1.1
+httpx==0.28.1
+beautifulsoup4==4.13.4
+playwright==1.55.0
+celery==5.5.3
+redis==6.4.0
+python-multipart==0.0.20
+pytest==8.4.1

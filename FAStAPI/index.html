@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>70-Day GenAI Interview Prep</title>
+    <meta name="description" content="A day-by-day 70-day plan for GenAI/LLM app + backend interview readiness. Track progress locally." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Inter:wght@300..700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="bg-noise" aria-hidden="true"></div>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand__kicker">Interview Prep • 2 hours/day</div>
+        <div class="brand__title">70-Day GenAI System Design</div>
+        <div class="brand__sub">40m learn • 60m build • 20m journal</div>
+      </div>
+
+      <div class="topbar__actions">
+        <button class="btn btn--ghost" id="todayBtn" type="button">Jump to today</button>
+        <button class="btn btn--ghost" id="resetBtn" type="button">Reset progress</button>
+        <button class="btn" id="exportBtn" type="button">Export</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar">
+        <div class="panel">
+          <div class="panel__title">Progress</div>
+          <div class="progress">
+            <div class="progress__meta">
+              <span id="progressText">0%</span>
+              <span class="muted" id="progressCounts">0/0</span>
+            </div>
+            <div class="progress__bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div class="progress__fill" id="progressFill"></div>
+            </div>
+            <div class="progress__mini muted" id="streakText">Streak: 0 days</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel__title">Find a day</div>
+          <label class="field">
+            <span class="field__label">Search</span>
+            <input id="searchInput" class="input" placeholder="e.g., RAG, eval, agents, FastAPI" />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Phase</span>
+            <select id="phaseSelect" class="input">
+              <option value="all">All phases</option>
+            </select>
+          </label>
+
+          <label class="field field--row">
+            <input id="hideCompleted" type="checkbox" />
+            <span>Hide completed days</span>
+          </label>
+        </div>
+
+        <div class="panel">
+          <div class="panel__title">Days</div>
+          <div class="daylist" id="dayList" aria-label="Day list"></div>
+        </div>
+
+        <div class="footer muted">
+          Data stays in your browser (localStorage). Journal is external: use your Notes app.
+        </div>
+      </aside>
+
+      <section class="content">
+        <div class="content__header">
+          <div class="content__title" id="dayTitle">Select a day</div>
+          <div class="content__meta muted" id="dayMeta"></div>
+        </div>
+
+        <div class="card" id="dayCard" hidden>
+          <div class="card__top">
+            <div class="pill" id="phasePill">Phase</div>
+            <div class="card__actions">
+              <button class="btn btn--ghost" id="prevDayBtn" type="button">Prev</button>
+              <button class="btn btn--ghost" id="nextDayBtn" type="button">Next</button>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="block">
+              <div class="block__hdr">
+                <div class="block__title">Learn (40 min)</div>
+                <label class="check">
+                  <input type="checkbox" data-block="learn" />
+                  <span>Done</span>
+                </label>
+              </div>
+              <ul class="list" id="learnList"></ul>
+            </div>
+
+            <div class="block">
+              <div class="block__hdr">
+                <div class="block__title">Build (60 min)</div>
+                <label class="check">
+                  <input type="checkbox" data-block="build" />
+                  <span>Done</span>
+                </label>
+              </div>
+              <ul class="list" id="buildList"></ul>
+            </div>
+
+            <div class="block">
+              <div class="block__hdr">
+                <div class="block__title">Journal (20 min)</div>
+                <label class="check">
+                  <input type="checkbox" data-block="journal" />
+                  <span>Done</span>
+                </label>
+              </div>
+              <ul class="list" id="journalList"></ul>
+            </div>
+          </div>
+
+          <div class="split">
+            <div class="block">
+              <div class="block__hdr">
+                <div class="block__title">Build checklist (60 min)</div>
+              </div>
+              <ol class="list list--ol" id="buildChecklist"></ol>
+            </div>
+
+            <div class="block">
+              <div class="block__hdr">
+                <div class="block__title">Practice set</div>
+              </div>
+              <ul class="list" id="practiceList"></ul>
+            </div>
+          </div>
+
+          <div class="split">
+            <div class="block">
+              <div class="block__hdr">
+                <div class="block__title">Self-test (5–10 min)</div>
+              </div>
+              <ol class="list list--ol" id="testList"></ol>
+            </div>
+          </div>
+
+          <div class="card__bottom">
+            <button class="btn" id="markDayBtn" type="button">Mark day complete</button>
+            <div class="muted">Tip: for interviews, practice saying the answer out loud in 2 minutes.</div>
+          </div>
+        </div>
+
+        <div class="card card--empty" id="emptyState">
+          <div class="empty__title">Build less noise. Build more signal.</div>
+          <div class="muted">
+            Pick a day from the left. Track learn/build/journal completion and export progress anytime.
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <dialog class="dialog" id="exportDialog">
+      <div class="dialog__hdr">
+        <div class="dialog__title">Export progress</div>
+        <button class="btn btn--ghost" id="closeExportBtn" type="button">Close</button>
+      </div>
+      <div class="dialog__body">
+        <div class="muted">Copy this JSON into a file (or paste into Notion/Docs). You can import later (manual).</div>
+        <textarea class="textarea" id="exportText" spellcheck="false"></textarea>
+      </div>
+      <div class="dialog__actions">
+        <button class="btn" id="copyExportBtn" type="button">Copy</button>
+      </div>
+    </dialog>
+
+    <script src="./plan-data.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

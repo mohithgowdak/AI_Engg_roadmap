@@ -1,5 +1,3 @@
-/* global PLAN_DAYS, PLAN_PHASES */
-
 const STORAGE_KEY = "genai70.progress.v1";
 
 function clamp(n, a, b) {
@@ -50,6 +48,8 @@ function isDayComplete(p) {
 }
 
 function computeProgress(progress) {
+  const PLAN_DAYS = window.PLAN_DAYS;
+  if (!Array.isArray(PLAN_DAYS)) return { totalBlocks: 0, doneBlocks: 0, pct: 0, completeDays: 0 };
   const totalBlocks = PLAN_DAYS.length * 3;
   let doneBlocks = 0;
   let completeDays = 0;
@@ -63,6 +63,8 @@ function computeProgress(progress) {
 }
 
 function computeStreak(progress) {
+  const PLAN_DAYS = window.PLAN_DAYS;
+  if (!Array.isArray(PLAN_DAYS)) return 0;
   // streak from day 1 onwards, counting consecutive fully complete days
   let streak = 0;
   for (const d of PLAN_DAYS) {
@@ -98,6 +100,8 @@ function renderOrderedList(targetOl, items) {
 }
 
 function buildPhaseOptions() {
+  const PLAN_PHASES = window.PLAN_PHASES;
+  if (!Array.isArray(PLAN_PHASES)) return;
   const select = el("phaseSelect");
   for (const p of PLAN_PHASES) {
     const opt = document.createElement("option");
@@ -136,6 +140,8 @@ function renderDayList(state) {
   const container = el("dayList");
   container.innerHTML = "";
   const { progress, filters, selectedDay } = state;
+  const PLAN_DAYS = window.PLAN_DAYS;
+  if (!Array.isArray(PLAN_DAYS)) return;
   const visibleDays = PLAN_DAYS.filter((d) =>
     dayMatchesFilters(d, filters.query, filters.phaseKey, filters.hideCompleted, progress)
   );
@@ -193,6 +199,8 @@ function renderDayList(state) {
 
 function renderSelectedDay(state) {
   const { selectedDay, progress } = state;
+  const PLAN_DAYS = window.PLAN_DAYS;
+  if (!Array.isArray(PLAN_DAYS)) return;
   const dayObj = PLAN_DAYS.find((d) => d.day === selectedDay);
 
   const title = el("dayTitle");
@@ -253,9 +261,11 @@ function renderSelectedDay(state) {
 }
 
 function renderProgressHeader(state) {
+  const PLAN_DAYS = window.PLAN_DAYS;
+  const dayCount = Array.isArray(PLAN_DAYS) ? PLAN_DAYS.length : 0;
   const { pct, doneBlocks, totalBlocks, completeDays } = computeProgress(state.progress);
   el("progressText").textContent = `${pct}%`;
-  el("progressCounts").textContent = `${doneBlocks}/${totalBlocks} blocks • ${completeDays}/${PLAN_DAYS.length} days`;
+  el("progressCounts").textContent = `${doneBlocks}/${totalBlocks} blocks • ${completeDays}/${dayCount} days`;
 
   const fill = el("progressFill");
   fill.style.width = `${pct}%`;
@@ -307,6 +317,8 @@ function setupTopActions(state) {
   };
 
   el("todayBtn").onclick = () => {
+    const PLAN_DAYS = window.PLAN_DAYS;
+    if (!Array.isArray(PLAN_DAYS) || PLAN_DAYS.length === 0) return;
     // “Today” heuristic: next incomplete day, else day 70
     let pickDay = 70;
     for (const d of PLAN_DAYS) {
@@ -345,6 +357,9 @@ function setupFilters(state) {
 }
 
 function init() {
+  if (!Array.isArray(window.PLAN_DAYS) || !Array.isArray(window.PLAN_PHASES)) return;
+  if (!document.getElementById("phaseSelect")) return;
+
   buildPhaseOptions();
 
   const state = {

@@ -152,6 +152,49 @@ body{
 }
 .btn--ghost:hover{background: rgba(255,255,255,.06)}
 
+.link{
+  color: var(--accent2);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(242,233,214,.24);
+}
+.link:hover{
+  border-bottom-color: rgba(242,233,214,.45);
+}
+
+.workout-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.workout-row{
+  display:grid;
+  grid-template-columns: 1fr minmax(220px, 360px);
+  gap:12px;
+  align-items:center;
+  padding:12px;
+  border-radius: var(--radius);
+  border:1px solid var(--border);
+  background: rgba(0,0,0,.12);
+}
+.workout-row__left{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  cursor:pointer;
+}
+.workout-row__left input{
+  margin-top: 4px;
+  accent-color: rgba(242,233,214,.8);
+}
+.workout-row__text{display:flex; flex-direction:column; gap:3px}
+.workout-row__name{font-family:var(--serif); font-size:15px; color: var(--accent2)}
+.workout-row__meta{font-size:12px}
+.workout-row__notes{width:100%}
+
+@media (max-width: 900px){
+  .workout-row{grid-template-columns: 1fr}
+}
+
 .daylist{
   display:flex;
   flex-direction:column;

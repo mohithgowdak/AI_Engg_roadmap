@@ -28,6 +28,9 @@ export default function Home() {
         </div>
 
         <div className="topbar__actions">
+          <a className="btn btn--ghost" href="/workout">
+            Workout
+          </a>
           <button className="btn btn--ghost" id="todayBtn" type="button">
             Jump to today
           </button>

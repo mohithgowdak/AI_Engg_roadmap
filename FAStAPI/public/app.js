@@ -1,5 +1,3 @@
-/* global PLAN_DAYS, PLAN_PHASES */
-
 const STORAGE_KEY = "genai70.progress.v2";
 const CLOUD_ENDPOINT = "/api/progress";
 const CLOUD_DEBOUNCE_MS = 900;
@@ -82,6 +80,8 @@ function isDayComplete(p) {
 }
 
 function computeProgress(payload) {
+  const PLAN_DAYS = window.PLAN_DAYS;
+  if (!Array.isArray(PLAN_DAYS)) return { totalBlocks: 0, doneBlocks: 0, pct: 0, completeDays: 0 };
   const totalBlocks = PLAN_DAYS.length * 3;
   let doneBlocks = 0;
   let completeDays = 0;
@@ -95,6 +95,8 @@ function computeProgress(payload) {
 }
 
 function computeStreak(payload) {
+  const PLAN_DAYS = window.PLAN_DAYS;
+  if (!Array.isArray(PLAN_DAYS)) return 0;
   let streak = 0;
   for (const d of PLAN_DAYS) {
     const p = getDayProgress(payload, d.day);
@@ -129,6 +131,8 @@ function renderOrderedList(targetOl, items) {
 }
 
 function buildPhaseOptions() {
+  const PLAN_PHASES = window.PLAN_PHASES;
+  if (!Array.isArray(PLAN_PHASES)) return;
   const select = el("phaseSelect");
   for (const p of PLAN_PHASES) {
     const opt = document.createElement("option");
@@ -168,6 +172,8 @@ function renderDayList(state) {
   const container = el("dayList");
   container.innerHTML = "";
   const { payload, filters, selectedDay } = state;
+  const PLAN_DAYS = window.PLAN_DAYS;
+  if (!Array.isArray(PLAN_DAYS)) return;
   const visibleDays = PLAN_DAYS.filter((d) => dayMatchesFilters(d, filters.query, filters.phaseKey, filters.hideCompleted, payload));
 
   if (visibleDays.length === 0) {
@@ -224,6 +230,8 @@ function renderDayList(state) {
 
 function renderSelectedDay(state) {
   const { selectedDay, payload } = state;
+  const PLAN_DAYS = window.PLAN_DAYS;
+  if (!Array.isArray(PLAN_DAYS)) return;
   const dayObj = PLAN_DAYS.find((d) => d.day === selectedDay);
 
   const title = el("dayTitle");
@@ -284,9 +292,11 @@ function renderSelectedDay(state) {
 }
 
 function renderProgressHeader(state) {
+  const PLAN_DAYS = window.PLAN_DAYS;
+  const dayCount = Array.isArray(PLAN_DAYS) ? PLAN_DAYS.length : 0;
   const { pct, doneBlocks, totalBlocks, completeDays } = computeProgress(state.payload);
   el("progressText").textContent = `${pct}%`;
-  el("progressCounts").textContent = `${doneBlocks}/${totalBlocks} blocks • ${completeDays}/${PLAN_DAYS.length} days`;
+  el("progressCounts").textContent = `${doneBlocks}/${totalBlocks} blocks • ${completeDays}/${dayCount} days`;
 
   const fill = el("progressFill");
   fill.style.width = `${pct}%`;
@@ -339,6 +349,8 @@ function setupTopActions(state) {
   };
 
   el("todayBtn").onclick = () => {
+    const PLAN_DAYS = window.PLAN_DAYS;
+    if (!Array.isArray(PLAN_DAYS) || PLAN_DAYS.length === 0) return;
     let pickDay = 70;
     for (const d of PLAN_DAYS) {
       const p = getDayProgress(state.payload, d.day);
@@ -415,6 +427,9 @@ function createCloudPersister(state) {
 }
 
 async function init() {
+  if (!Array.isArray(window.PLAN_DAYS) || !Array.isArray(window.PLAN_PHASES)) return;
+  if (!document.getElementById("phaseSelect")) return;
+
   buildPhaseOptions();
 
   const local = loadLocalProgress();
